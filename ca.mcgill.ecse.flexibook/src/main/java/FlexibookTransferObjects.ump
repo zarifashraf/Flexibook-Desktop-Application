@@ -1,0 +1,60 @@
+namespace ca.mcgill.ecse.flexibook.controller;
+
+class TOBusiness
+{
+  String name;
+  String address;
+  String phoneNumber;
+  String email;
+}
+
+class TOService
+{
+  name;
+  Integer duration;
+  Integer downtimeDuration;
+  Integer downtimeStart;
+}
+
+class TOServiceCombo
+{
+  name;
+    1 <@>- 2..* TOComboItem services;
+
+}
+
+class TOOwner
+{
+  username;
+  password;
+}
+
+class TOCustomer
+{
+  name;
+  password;
+}
+
+class TOAppointment
+{
+
+  Date startDate;
+  Date endDate;
+  Time startTime;
+  Time endTime;
+
+}
+
+class TOComboItem
+{
+  Boolean mandatory;
+
+}
+
+class TOBusinessHour
+{
+	String day;
+	Time startTime;
+	Time endTime;
+}
+

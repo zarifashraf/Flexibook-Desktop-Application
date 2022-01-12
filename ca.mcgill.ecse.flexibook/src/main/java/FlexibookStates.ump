@@ -1,0 +1,61 @@
+class Customer {
+   lazy Integer noShows;
+}
+
+class Service{}
+
+class Appointment {
+  depend java.sql.Time;
+  depend java.sql.Date;
+  
+   status {
+      Booked {
+         update(Date curDate, Date date,  Service service, Time startTime, Time endTime) [atLeastOneDayBefore(curDate, date) && timeSlotAvailable(startTime, endTime)] / {
+            doUpdate(date, service, startTime, endTime);
+         } -> Booked;
+         cancel(Date curDate, Date date) [atLeastOneDayBefore(curDate, date)] -> Final;
+         start(Date date, Time time) [!beforeAppointmentDateTime(date, time)] -> InProgress;
+         noShow(Date date, Time time) [!beforeAppointmentDateTime(date, time)] / {
+            doNoShow();
+         } -> Final;
+      }
+      InProgress {
+         updateOptionals(Time startTime, Time endTime, Service service) [timeSlotAvailable(startTime, endTime)] / {
+            doUpdateOptionals(service, startTime, endTime);
+         } -> InProgress;
+         end -> Final;
+      }
+   }
+  
+  private boolean atLeastOneDayBefore(Date curDate, Date date){
+    return (getTimeSlot().getStartDate()).after(curDate);  
+  }
+  
+  private boolean beforeAppointmentDateTime(Date date, Time time){
+     return date.before(getTimeSlot().getStartDate()) && time.before(getTimeSlot().getStartTime());  
+  }
+  
+  private boolean timeSlotAvailable(Time startTime, Time endTime){
+    for(TimeSlot timeSlot : flexiBook.getTimeSlots()){
+      		if (timeSlot.getStartTime().equals(endTime)){
+      			return false;
+      		}
+      }
+      return true;
+  }
+  
+  private void doNoShow(){
+      int count = customer.getNoShowCount();
+  	customer.setNoShowCount(count++);
+  }
+  
+  private void doUpdate(Date date, Service service, Time startTime, Time endTime){
+        getTimeSlot().setStartTime(startTime);
+        getTimeSlot().setStartDate(date);
+    	setBookableService(service);
+  }
+  
+  private void doUpdateOptionals(Service service, Time startTime, Time endTime){
+        
+  }
+}
